@@ -4,7 +4,6 @@ import Layout from "@/components/Layout";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useQuery, gql } from "@apollo/client";
-//import {getClient} from '../../config/ApolloClient'
 
 const QUERY = gql`
   query ObtenerClientes {
@@ -24,7 +23,9 @@ const QUERY = gql`
 `;
 
 const NuevoCliente = () => {
- 
+
+  const { loading, error, data } = useQuery(QUERY);
+  console.log(data);
 
   const formik = useFormik({
     initialValues: {
@@ -54,6 +55,10 @@ const NuevoCliente = () => {
       console.log(values);
     },
   });
+  if(loading){
+    return(<p>Loading ...</p>)
+  }
+  if(error){return(<p>Error</p>)}
   return (
     <Layout>
       <h2 className=" text-2xl text-white font-light">Nuevo Cliente</h2>

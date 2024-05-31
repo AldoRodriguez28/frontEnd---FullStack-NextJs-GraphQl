@@ -2,6 +2,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation';
+import * as Yup from "yup";
 
 const Sidebar = ()=>{
       // routing de next
