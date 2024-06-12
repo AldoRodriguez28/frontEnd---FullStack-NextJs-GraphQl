@@ -1,7 +1,6 @@
 import React, { ReactNode } from "react";
 import Layout from "../components/Layout";
 
-
 interface Props {
   children?: ReactNode
   // any props that come into the component

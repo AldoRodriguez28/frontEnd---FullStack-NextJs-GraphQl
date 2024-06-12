@@ -1,9 +1,10 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Layout from "@/components/Layout";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation, gql } from "@apollo/client";
+import { useSearchParams } from "next/navigation";
 
 const NUEVO_CLIENTE = gql`
 mutation NuevoCliente($input: ClienteInput) {
@@ -17,6 +18,9 @@ mutation NuevoCliente($input: ClienteInput) {
 `;
 
 const NuevoCliente = () => {
+  const [succesCreate, setSuccesCreate] = useState(false);
+  const [errorCreate, setErrorCreate] = useState(false);
+  const [message, setMessage] = useState('');
 
   const [ nuevoCliente ] = useMutation(NUEVO_CLIENTE);
 
@@ -46,7 +50,7 @@ const NuevoCliente = () => {
       telefono:Yup.string().required("El telefono es requerido"),
     }),
     onSubmit: async (values) => {
-      console.log(values);
+     
       const { nombre,apellido,matricula,email,estado,municipio,curp, telefono } = values;
 
       try {
@@ -65,27 +69,51 @@ const NuevoCliente = () => {
         }
        });
        console.log(data)
+       guardarMensaje('', false);
+       setTimeout(()=>{
+        setSuccesCreate(false);
+      },3000);
       } catch (error:any) {
-        guardarMensaje(error.message);
+        guardarMensaje(error.message, true);
 
         setTimeout(()=>{
-          guardarMensaje(null);
+          setErrorCreate(false);
         },3000);
       }   
     },
+    
   });
-const guardarMensaje = (message:any)=>{
-  return(
-    <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto">
-      <p>{message}</p>
-
-    </div>
-  )};
+  const guardarMensaje = (message:any, isError:boolean)=>{
+    setMessage(message);
+    if(isError){
+      setErrorCreate(true);
+    }else{
+      setSuccesCreate(true);
+    }
+   };
   return (
     <Layout>
 
         <h2 className=" text-2xl text-white font-light">Nuevo Cliente</h2><div className="flex justify-center mt-5 text-blue-950">
-            <div className="w-full max-w-sm">
+            <div className="w-full max-w-3xl">
+               {/*Logica mostrando mensajes de error o de autenticado */}
+            {!errorCreate ? (
+              <div></div>
+            ) : (
+              <div className="py-2 px-3 w-full my-3 max-w-sm my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                <p>{message}</p>
+              </div>
+            )}
+
+            {!succesCreate ? (
+              <div></div>
+            ) : (
+              <div className="py-2 px-3 w-full my-3 max-w-sm my-2 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
+                <p>Usuario creado correctamente</p>
+              </div>
+            )}
+
+            {/*Logica mostrando mensajes de error o de autenticado */}
               <form
                 className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4"
                 onSubmit={formik.handleSubmit}

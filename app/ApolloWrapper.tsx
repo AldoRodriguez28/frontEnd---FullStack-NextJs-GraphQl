@@ -1,13 +1,27 @@
 "use client";
 // ^ this file needs the "use client" pragma
 
-import { ApolloLink, HttpLink } from "@apollo/client";
+import { ApolloLink, HttpLink, concat } from "@apollo/client";
 import {
   ApolloNextAppProvider,
   ApolloClient,
   InMemoryCache,
   SSRMultipartLink,
 } from "@apollo/experimental-nextjs-app-support";
+import { setContext } from "apollo-link-context";
+
+
+const authMiddleware = new ApolloLink((operation, forward) => {
+  const token = localStorage.getItem('token');
+  // add the authorization to the headers
+  operation.setContext(({ headers = {} }) => ({
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : ''
+    }
+  }));
+  return forward(operation);
+})
 
 // have a function to create a client for you
 function makeClient() {
@@ -26,8 +40,8 @@ function makeClient() {
   // use the `ApolloClient` from "@apollo/experimental-nextjs-app-support"
   return new ApolloClient({
     // use the `InMemoryCache` from "@apollo/experimental-nextjs-app-support"
+    link: concat(authMiddleware, httpLink),
     cache: new InMemoryCache(),
-    link: httpLink,
   });
 }
 

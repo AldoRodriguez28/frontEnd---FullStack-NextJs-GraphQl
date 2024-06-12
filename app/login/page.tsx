@@ -44,11 +44,15 @@ const router= useRouter()
             }
           }
         });
-        console.log(data); 
+
+        const { token } = data.autenticarUsuario;
+        localStorage.setItem('token',token);
+
         setLoadingAutenticacion(true);
+        //redireccionando al dashboard
         router.push('/dashboard')
       } catch (error:any) {
-        console.log(error.message);
+        console.error(error.message);
         //Renderizando mensaje de error
         guardarMensaje(error.message);
         setTimeout(()=>{
