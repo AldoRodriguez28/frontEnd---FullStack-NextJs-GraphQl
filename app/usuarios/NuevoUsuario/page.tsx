@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React,{useState} from "react";
 import Layout from "@/components/Layout";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -15,6 +15,10 @@ mutation NuevoUsuario($input: UsuarioInput) {
 `;
 
 const NuevoCliente = () => {
+  const [succesCreate, setSuccesCreate] = useState(false);
+  const [errorCreate, setErrorCreate] = useState(false);
+  const [message, setMessage] = useState('');
+
 
   const [ nuevoUsuario ] = useMutation(NUEVO_USUARIO);
 
@@ -38,44 +42,67 @@ const NuevoCliente = () => {
       confirmPassword: Yup.string().required('Debes confirmar tu password').oneOf([Yup.ref('password'), ''],'El password no coincide')
       
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values,{resetForm}) => {
       console.log(values);
       const { nombre,apellido,email,password,rol } = values;
 
       try {
-      const {data} = await nuevoUsuario({
-        variables:{
-          input:{
-            nombre: nombre,
-            apellido: apellido,
-            email:email,
-           password:password,
-           rol:rol
+        const {data} = await nuevoUsuario({
+          variables:{
+            input:{
+              nombre: nombre,
+              apellido: apellido,
+              email:email,
+            password:password,
+            rol:rol
+            }
           }
-        }
-       });
-       console.log(data)
-      } catch (error:any) {
-        guardarMensaje(error.message);
-
+        });
+        console.log(data)
+        guardarMensaje('', false);
         setTimeout(()=>{
-          guardarMensaje(null);
-        },3000);
+          setSuccesCreate(false);
+          resetForm();
+        },5000);
+      } catch (error:any) {
+          guardarMensaje(error.message, true);
+          setTimeout(()=>{
+            setErrorCreate(false);
+          },5000);
       }   
     },
   });
-const guardarMensaje = (message:any)=>{
-  return(
-    <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto">
-      <p>{message}</p>
-
-    </div>
-  )};
+  const guardarMensaje = (message:any, isError:boolean)=>{
+    setMessage(message);
+    if(isError){
+      setErrorCreate(true);
+    }else{
+      setSuccesCreate(true);
+    }
+   };
   return (
     <Layout>
 
         <h2 className=" text-2xl text-white font-light">Nuevo Usuario</h2><div className="flex justify-center mt-5 text-blue-950">
             <div className="w-full max-w-3xl">
+                     {/*Logica mostrando mensajes de error o de autenticado */}
+            {!errorCreate ? (
+              <div></div>
+            ) : (
+              <div className="py-4 px-3 w-full max-w-3xl my-3 my-2 bg-red-100 border-l-8 border-red-500 text-red-700 p-4">
+                <p className="text-xl">{message}</p>
+              </div>
+            )}
+
+            {!succesCreate ? (
+              <div></div>
+            ) : (
+              <div className="py-4 px-3 w-full max-w-3xl my-3 my-2 bg-green-100 border-l-8 border-green-500 text-green-700 p-4">
+                <p className="text-xl">El usuario se creo correctamente</p>
+              </div>
+            )}
+
+            {/*Logica mostrando mensajes de error o de autenticado */}
               <form
                 className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4"
                 onSubmit={formik.handleSubmit}

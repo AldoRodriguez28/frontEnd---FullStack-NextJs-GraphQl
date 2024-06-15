@@ -49,7 +49,7 @@ const NuevoCliente = () => {
       curp: Yup.string().required("La curp es requerida"),
       telefono:Yup.string().required("El telefono es requerido"),
     }),
-    onSubmit: async (values) => {
+    onSubmit: async (values, {resetForm}) => {
      
       const { nombre,apellido,matricula,email,estado,municipio,curp, telefono } = values;
 
@@ -72,7 +72,8 @@ const NuevoCliente = () => {
        guardarMensaje('', false);
        setTimeout(()=>{
         setSuccesCreate(false);
-      },3000);
+        resetForm();
+      },5000);
       } catch (error:any) {
         guardarMensaje(error.message, true);
 
@@ -100,16 +101,16 @@ const NuevoCliente = () => {
             {!errorCreate ? (
               <div></div>
             ) : (
-              <div className="py-2 px-3 w-full my-3 max-w-sm my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
-                <p>{message}</p>
+              <div className="py-4 px-3 w-full max-w-3xl my-3 my-2 bg-red-100 border-l-8 border-red-500 text-red-700 p-4">
+                <p className="text-xl">{message}</p>
               </div>
             )}
 
             {!succesCreate ? (
               <div></div>
             ) : (
-              <div className="py-2 px-3 w-full my-3 max-w-sm my-2 bg-green-100 border-l-4 border-green-500 text-green-700 p-4">
-                <p>Usuario creado correctamente</p>
+              <div className="py-4 px-3 w-full max-w-3xl my-3 my-2 bg-green-100 border-l-8 border-green-500 text-green-700 p-4">
+                <p className="text-xl">El cliente se creo correctamente</p>
               </div>
             )}
 
