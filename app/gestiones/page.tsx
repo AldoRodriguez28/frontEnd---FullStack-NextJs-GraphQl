@@ -10,6 +10,7 @@ query ObtenerGestiones {
     id
     clienteId
     usuarioId
+    folio
     lugar
     tipo
     descripcion
@@ -64,6 +65,7 @@ if(loading){
         <table className='table-auto mx-auto mt-10 max-w-4xl w-full whitespace-nowrap rounded-lg bg-white divide-y divide-gray-300 overflow-hidden'>
         <thead className="bg-gray-950">
               <tr className="text-white">
+                <th className="font-semibold text-sm uppercase px-6 py-4">Folio</th>                
                 <th className="font-semibold text-sm uppercase px-6 py-4">Descripcion</th>
                 <th className="font-semibold text-sm uppercase px-6 py-4">Tipo</th>
                 <th className="font-semibold text-sm uppercase px-6 py-4">Estatus</th>
@@ -73,6 +75,7 @@ if(loading){
             <tbody className="overflow-y-scroll h-1/2">
               {data.obtenerGestiones.map((gestion:any)=>(
                 <tr className="border-b border-neutral-200 dark:border-white/10 bg-orange-50" key={gestion.id}>
+                  <td className="whitespace-nowrap  px-6 py-4 font-medium uppercase  ">{gestion.folio}</td>
                   <td className="whitespace-nowrap  px-6 py-4 font-medium uppercase  ">{gestion.descripcion}</td>
                   <td className="whitespace-nowrap  px-6 py-4 font-medium uppercase  ">{gestion.tipo}</td>
                   <td className="whitespace-nowrap  px-6 py-4 font-medium uppercase  ">{gestion.estatus}</td>

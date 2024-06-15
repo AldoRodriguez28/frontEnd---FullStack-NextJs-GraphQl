@@ -10,7 +10,7 @@ mutation NuevaGestion($input: GestionInput) {
   nuevaGestion(input: $input) {
     id
     descripcion
-    estatuss
+    estatus
     tipo
   }
 }
@@ -46,8 +46,6 @@ const NuevaGestion = () => {
       descripcion: Yup.string().required('El descripcion es requerido'),      
     }),
     onSubmit: async (values,{resetForm}) => {
-      debugger;
-      console.log(values);
       const { tipo,matricula,lugar,estatus,descripcion } = values;
 
       try {

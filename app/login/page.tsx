@@ -46,6 +46,7 @@ const router= useRouter()
         });
 
         const { token } = data.autenticarUsuario;
+        localStorage.removeItem('token');
         localStorage.setItem('token',token);
 
         setLoadingAutenticacion(true);
