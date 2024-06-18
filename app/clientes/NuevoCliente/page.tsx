@@ -1,6 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Layout from "@/components/Layout";
+import { useRouter } from 'next/navigation';
+
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation, gql } from "@apollo/client";
@@ -16,13 +18,42 @@ mutation NuevoCliente($input: ClienteInput) {
   }
 }
 `;
+const GET_CLIENTS = gql`
+query ObtenerClientes {
+  obtenerClientes {
+    id
+    nombre
+    apellido
+    email
+    matricula
+    municipio
+    estado
+    telefono
+    curp
+    creado
+  }
+}
+`;
 
 const NuevoCliente = () => {
   const [succesCreate, setSuccesCreate] = useState(false);
   const [errorCreate, setErrorCreate] = useState(false);
   const [message, setMessage] = useState('');
 
-  const [ nuevoCliente ] = useMutation(NUEVO_CLIENTE);
+  const router = useRouter();
+
+  const [ nuevoCliente ] = useMutation(NUEVO_CLIENTE,{
+    update(cache, {data:{nuevoCliente}}){
+      const { obtenerClientes } = cache.readQuery({query: GET_CLIENTS});
+
+       cache.writeQuery({
+        query: GET_CLIENTS,
+        data:{
+          obtenerClientes:[...obtenerClientes, nuevoCliente]
+        }
+       })
+    }
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -73,6 +104,7 @@ const NuevoCliente = () => {
        setTimeout(()=>{
         setSuccesCreate(false);
         resetForm();
+        router.push('/clientes')
       },5000);
       } catch (error:any) {
         guardarMensaje(error.message, true);
