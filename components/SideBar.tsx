@@ -23,7 +23,7 @@ const Sidebar = ()=>{
       const router = useRouter();
       const pathname = usePathname();
 
-    // if(loading)return null;
+     
     return(
         <aside className="bg-gray-800 sm:w-1/5 xl:w-1/5 sm:min-h-screen p-5" >
         <div>
@@ -52,22 +52,19 @@ const Sidebar = ()=>{
                     </p>
                 </Link>
             </li>
-            {(data?.obtenerUsuario.rol === 'ADMINISTRADOR') ? (
-                <li className={pathname === "/usuarios" ? "bg-blue-800 p-2" : "p-2"}>
-                    <Link href="/usuarios">
-                        <p className="text-white block">
-                            Usuarios
-                        </p>
-                    </Link>
-                </li>
-            ):(
-                ''
-            )
-               
-            
+            {   
+                (data && data.obtenerUsuario && data?.obtenerUsuario.rol === 'ADMINISTRADOR') ? (
+                    <li className={pathname === "/usuarios" ? "bg-blue-800 p-2" : "p-2"}>
+                        <Link href="/usuarios">
+                            <p className="text-white block">
+                                Usuarios
+                            </p>
+                        </Link>
+                    </li>
+                ):(
+                    ''
+                )
             }
-           
-           
         </nav>
 
     </aside>

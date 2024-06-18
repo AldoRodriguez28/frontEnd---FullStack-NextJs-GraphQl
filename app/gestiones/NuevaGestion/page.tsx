@@ -1,6 +1,8 @@
 "use client";
 import React,{useState} from "react";
 import Layout from "@/components/Layout";
+import { useRouter } from 'next/navigation';
+
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation, gql } from "@apollo/client";
@@ -16,13 +18,41 @@ mutation NuevaGestion($input: GestionInput) {
 }
 `;
 
+const GET_GESTIONES = gql`
+query ObtenerGestiones {
+  obtenerGestiones {
+    id
+    clienteId
+    usuarioId
+    folio
+    lugar
+    tipo
+    descripcion
+    estatus
+    creado
+  }
+}
+`;
+
 const NuevaGestion = () => {
   const [succesCreate, setSuccesCreate] = useState(false);
   const [errorCreate, setErrorCreate] = useState(false);
   const [message, setMessage] = useState('');
+  const router = useRouter();
 
 
-  const [ nuevaGestion ] = useMutation(NUEVA_GESTION);
+  const [ nuevaGestion ] = useMutation(NUEVA_GESTION,{
+    update(cache,{ data: {nuevaGestion}}){
+      const { obtenerGestiones } = cache.readQuery({ query: GET_GESTIONES})
+
+      cache.writeQuery({
+        query: GET_GESTIONES,
+        data:{
+          obtenerGestiones: [...obtenerGestiones, nuevaGestion]
+        }
+      })
+    }
+  });
 
 //modificar el schema para que gestion acepte nombre de cliente   ok
 //ese deberia asignarse en bas desde el backeng resolvers  ok
@@ -65,6 +95,8 @@ const NuevaGestion = () => {
         setTimeout(()=>{
           setSuccesCreate(false);
           resetForm();
+          router.push('/gestiones')
+
         },5000);
       } catch (error:any) {
         console.log(error)

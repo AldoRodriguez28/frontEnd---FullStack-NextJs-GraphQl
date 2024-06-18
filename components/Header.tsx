@@ -1,4 +1,4 @@
-import React, { use } from "react";
+import React from "react";
 import {gql, useQuery} from '@apollo/client'
 import { useRouter } from 'next/navigation';
 
@@ -34,7 +34,7 @@ const Header =()=>{
         <>
         <div className="flex justify-between">
             <div>
-               <h3 className="align-center text-center text-white font-light mt-5">Hola {data.obtenerUsuario.nombre} </h3> 
+               <h3 className="align-center text-center text-white font-light mt-5">Hola {data.obtenerUsuario && data.obtenerUsuario.nombre} </h3> 
             </div>
             <div className="container_cerrar_sesion">
             <p onClick={()=>cerrarSesion()} className="bg-blue-800 w-full mt-5 p-3 text-white uppercase hover:bg-blue-900 rounded-lg">
